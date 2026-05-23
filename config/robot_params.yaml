@@ -1,0 +1,23 @@
+# Physical robot parameters — single source of truth for kinematics.
+# Differential drive: 2x NEMA 17 steppers + 1 caster.
+# Values marked (MEASURE) are provisional and must be confirmed on the assembled
+# robot during Phase 7; simulation uses them as-is.
+
+drive:
+  wheelbase_m: 0.180          # (MEASURE) distance between the two driven wheels [m]
+  wheel_radius_m: 0.0325      # (MEASURE) driven wheel radius [m]
+  gear_ratio: 1.0             # motor:wheel reduction (1.0 = direct drive)
+
+stepper:
+  steps_per_rev: 200          # NEMA 17, 1.8 deg/step -> 360/1.8 = 200 full steps
+  microstepping: 16           # TMC2209 MS1/MS2 setting (16x microsteps)
+  # Effective microsteps per wheel revolution = steps_per_rev * microstepping * gear_ratio
+  max_speed_mps: 0.30         # commanded linear speed cap [m/s]
+  max_accel_mps2: 0.50        # trapezoidal ramp acceleration [m/s^2]
+
+limits:
+  max_angular_speed_radps: 3.0   # yaw rate cap [rad/s]
+
+goal_tolerance:
+  position_m: 0.05            # "arrived" when within 5 cm of goal (Phase 5)
+  heading_rad: 0.0873         # and within 5 deg (= 0.0873 rad)

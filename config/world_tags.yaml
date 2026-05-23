@@ -1,0 +1,24 @@
+# AprilTag world map: tag_id -> pose (x, y, theta) in the world frame.
+# Used by the simulator as ground truth and by localization as known landmarks.
+# Phase 0: sample placements for a small room. Real measured positions are
+# recorded here in Phase 7.
+#
+# Units: x, y in metres; theta in radians (tag facing direction, 0 = +x axis).
+
+tags:
+  0:
+    x: 0.0
+    y: 0.0
+    theta: 0.0
+  1:
+    x: 4.0
+    y: 0.0
+    theta: 3.14159
+  2:
+    x: 4.0
+    y: 3.0
+    theta: 3.14159
+  3:
+    x: 0.0
+    y: 3.0
+    theta: 0.0

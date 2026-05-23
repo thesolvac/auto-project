@@ -1,0 +1,22 @@
+# Camera intrinsics. Phase 0-6 uses synthetic values for the simulated camera.
+# Real intrinsics (from cv2.calibrateCamera on the mounted webcam) replace these
+# in Phase 7. Pinhole model with OpenCV distortion coefficients.
+
+resolution:
+  width: 640
+  height: 480
+
+# Synthetic pinhole intrinsics for the simulator (approx. 60 deg horizontal FOV).
+# fx = fy = (width/2) / tan(hfov/2) = 320 / tan(30 deg) ~= 554
+intrinsics:
+  fx: 554.0
+  fy: 554.0
+  cx: 320.0
+  cy: 240.0
+
+# Distortion: zero for the ideal simulated camera (k1 k2 p1 p2 k3).
+distortion: [0.0, 0.0, 0.0, 0.0, 0.0]
+
+apriltag:
+  family: "tag36h11"
+  tag_size_m: 0.10            # printed tag edge length [m]
