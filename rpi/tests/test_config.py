@@ -51,7 +51,9 @@ def test_provisional_false_is_silent(tmp_path, caplog):
 
 
 def test_stale_provisional_path_raises(tmp_path):
-    path = _write(tmp_path, "provisional:\n  - drive.missing\ndrive:\n  wheelbase: 0.18\n")
+    path = _write(
+        tmp_path, "provisional:\n  - drive.missing\ndrive:\n  wheelbase: 0.18\n"
+    )
     with pytest.raises(ValueError, match="does not exist"):
         load_config(path)
 
@@ -92,7 +94,9 @@ def test_pydantic_model_validation(tmp_path):
         load_config(bad, model=Params)
 
 
-@pytest.mark.parametrize("yaml_file", sorted(CONFIG_DIR.rglob("*.yaml")), ids=lambda p: p.name)
+@pytest.mark.parametrize(
+    "yaml_file", sorted(CONFIG_DIR.rglob("*.yaml")), ids=lambda p: p.name
+)
 def test_real_config_files_load(yaml_file):
     """Every shipped config file parses and its provisional markers resolve."""
     cfg = load_config(yaml_file)

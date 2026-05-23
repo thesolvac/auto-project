@@ -37,7 +37,9 @@ def test_rectangle_distance_to_point():
     rect = Rectangle(1.0, 1.0, 2.0, 2.0)
     assert rect.distance_to_point(1.5, 1.5) == 0.0  # inside
     assert rect.distance_to_point(3.0, 1.5) == pytest.approx(1.0)  # right of edge
-    assert rect.distance_to_point(0.0, 0.0) == pytest.approx(math.hypot(1.0, 1.0))  # corner
+    assert rect.distance_to_point(0.0, 0.0) == pytest.approx(
+        math.hypot(1.0, 1.0)
+    )  # corner
 
 
 def test_ray_box_hit_in_front():

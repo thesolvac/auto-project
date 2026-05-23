@@ -43,7 +43,9 @@ def test_detector_empty_when_facing_away():
 
 def test_detector_noise_is_seeded_and_bounded():
     noise_world = _world_with_tag_ahead(noise=NoiseConfig(seed=7))
-    detector = SimAprilTagDetector(noise_world, range_sigma_m=0.05, bearing_sigma_rad=0.02)
+    detector = SimAprilTagDetector(
+        noise_world, range_sigma_m=0.05, bearing_sigma_rad=0.02
+    )
     d1 = detector.detect()[0]
     # Re-seeded detector on an identical world reproduces the same noisy reading.
     detector2 = SimAprilTagDetector(
@@ -64,9 +66,13 @@ def test_camera_frame_shape_and_dtype():
 
 
 def test_camera_draws_visible_tag():
-    camera = SimCamera(_world_with_tag_ahead(), width=320, height=240, fov_rad=math.radians(90))
+    camera = SimCamera(
+        _world_with_tag_ahead(), width=320, height=240, fov_rad=math.radians(90)
+    )
     frame = camera.get_frame()
     assert frame.max() == 255  # the tag square is rendered white
 
-    blank_world = _world_with_tag_ahead(robot_pose=Pose(2.0, 1.5, math.pi))  # tag behind
+    blank_world = _world_with_tag_ahead(
+        robot_pose=Pose(2.0, 1.5, math.pi)
+    )  # tag behind
     assert SimCamera(blank_world, width=320, height=240).get_frame().max() < 255

@@ -18,7 +18,9 @@ def test_empty_map_has_direct_path():
     path = astar(grid, (0.25, 0.25), (3.75, 2.75))
     assert path is not None
     assert path[0] == pytest.approx(grid.cell_to_world(*grid.world_to_cell(0.25, 0.25)))
-    assert path[-1] == pytest.approx(grid.cell_to_world(*grid.world_to_cell(3.75, 2.75)))
+    assert path[-1] == pytest.approx(
+        grid.cell_to_world(*grid.world_to_cell(3.75, 2.75))
+    )
 
 
 def test_path_routes_around_obstacle():
@@ -42,10 +44,18 @@ def test_start_equals_goal():
     assert len(path) == 1
 
 
-def test_blocked_start_or_goal_returns_none():
+def test_blocked_goal_returns_none():
     grid = OccupancyGrid.from_obstacles([(0.0, 0.0, 0.5, 0.5)], 4.0, 3.0, 0.25)
-    assert astar(grid, (0.1, 0.1), (3.0, 2.0)) is None  # start blocked
-    assert astar(grid, (3.0, 2.0), (0.1, 0.1)) is None  # goal blocked
+    assert astar(grid, (3.0, 2.0), (0.1, 0.1)) is None  # goal blocked -> no path
+
+
+def test_blocked_start_snaps_to_free_cell():
+    # A start inside the inflation margin snaps to the nearest free cell instead
+    # of failing, so the robot can plan its way out.
+    grid = OccupancyGrid.from_obstacles([(0.0, 0.0, 0.5, 0.5)], 4.0, 3.0, 0.25)
+    path = astar(grid, (0.1, 0.1), (3.0, 2.0))  # start inside the obstacle
+    assert path is not None
+    assert all(grid.is_free(x, y) for x, y in path)
 
 
 def test_narrow_corridor_closes_after_inflation():

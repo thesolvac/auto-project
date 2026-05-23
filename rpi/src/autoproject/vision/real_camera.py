@@ -22,7 +22,10 @@ class RealCamera(ICamera):
     """``ICamera`` backed by an OpenCV ``VideoCapture`` (V4L2)."""
 
     def __init__(
-        self, device_index: int = DEFAULT_DEVICE_INDEX, width: int = 640, height: int = 480
+        self,
+        device_index: int = DEFAULT_DEVICE_INDEX,
+        width: int = 640,
+        height: int = 480,
     ) -> None:
         self._device_index = device_index
         self._width = width

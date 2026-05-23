@@ -22,7 +22,9 @@ def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(message)s")
     world = World.from_scenario(CONFIG_DIR / "sim_scenarios" / "demo_room.yaml")
     comms = build_robot_comms(load_runtime(), world=world)
-    comms.on_obstacle(lambda sensor, dist: logger.info("  ! OBSTACLE %s @ %.2f m", sensor, dist))
+    comms.on_obstacle(
+        lambda sensor, dist: logger.info("  ! OBSTACLE %s @ %.2f m", sensor, dist)
+    )
     comms.on_slip(lambda: logger.info("  ! SLIP"))
 
     comms.move(0.10, 0.12)  # gentle left-curving arc
@@ -42,7 +44,12 @@ def main() -> None:
                 pose.theta,
             )
     comms.stop()
-    logger.info("done; final pose=(%.2f, %.2f, %.2f)", world.pose.x, world.pose.y, world.pose.theta)
+    logger.info(
+        "done; final pose=(%.2f, %.2f, %.2f)",
+        world.pose.x,
+        world.pose.y,
+        world.pose.theta,
+    )
 
 
 if __name__ == "__main__":

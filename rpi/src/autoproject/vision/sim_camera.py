@@ -56,7 +56,9 @@ class SimCamera(ICamera):
 
     def get_frame(self) -> np.ndarray:
         frame = np.full((self.height, self.width, 3), _BACKGROUND_GRAY, dtype=np.uint8)
-        for sighting in self.world.visible_tags(self.camera_pose(), self.fov_rad, self.max_range_m):
+        for sighting in self.world.visible_tags(
+            self.camera_pose(), self.fov_rad, self.max_range_m
+        ):
             x_px = int(round(self.cx - self.fx * math.tan(sighting.bearing_rad)))
             half = max(2, int(self.fx * self.tag_size_m / (2.0 * sighting.range_m)))
             x0 = max(0, x_px - half)

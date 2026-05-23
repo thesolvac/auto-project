@@ -36,7 +36,9 @@ def line_of_sight(
             y0 += sy
 
 
-def smooth_path(grid: OccupancyGrid, path: list[tuple[float, float]]) -> list[tuple[float, float]]:
+def smooth_path(
+    grid: OccupancyGrid, path: list[tuple[float, float]]
+) -> list[tuple[float, float]]:
     """Greedily drop intermediate waypoints that are not needed for clearance.
 
     Keeps the first point, then repeatedly advances to the farthest subsequent

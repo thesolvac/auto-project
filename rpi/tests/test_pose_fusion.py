@@ -36,7 +36,9 @@ def _world(noise: NoiseConfig | None = None) -> World:
     )
 
 
-def _run(filt: PoseFilter, *, world: World, steps: int, update_every: int) -> tuple[float, float]:
+def _run(
+    filt: PoseFilter, *, world: World, steps: int, update_every: int
+) -> tuple[float, float]:
     """Drive straight, feed odometry to the filter, fuse tag sightings.
 
     Returns ``(position_rmse, final_position_error)``. ``update_every <= 0``
@@ -89,10 +91,16 @@ def test_ekf_update_pulls_estimate_toward_truth():
 def test_ekf_beats_odometry_under_slip_intermittent_tags():
     slip = NoiseConfig(seed=5, wheel_slip_prob=0.3, wheel_slip_factor=0.0)
     odom_rmse, _ = _run(
-        EKFFusion(0.15, initial_pose=_START), world=_world(slip), steps=250, update_every=0
+        EKFFusion(0.15, initial_pose=_START),
+        world=_world(slip),
+        steps=250,
+        update_every=0,
     )
     ekf_rmse, _ = _run(
-        EKFFusion(0.15, initial_pose=_START), world=_world(slip), steps=250, update_every=5
+        EKFFusion(0.15, initial_pose=_START),
+        world=_world(slip),
+        steps=250,
+        update_every=5,
     )
     assert ekf_rmse < 0.6 * odom_rmse  # >= 40% RMSE reduction
 
@@ -100,7 +108,10 @@ def test_ekf_beats_odometry_under_slip_intermittent_tags():
 def test_ekf_state_bounded_during_long_blackout():
     ekf = EKFFusion(0.15, initial_pose=_START)
     rmse, _ = _run(
-        ekf, world=_world(NoiseConfig(seed=1, wheel_slip_prob=0.2)), steps=100, update_every=0
+        ekf,
+        world=_world(NoiseConfig(seed=1, wheel_slip_prob=0.2)),
+        steps=100,
+        update_every=0,
     )
     x, y, theta = ekf.pose
     assert math.isfinite(x) and math.isfinite(y) and math.isfinite(theta)
@@ -118,7 +129,9 @@ def test_recovery_after_blackout():
     ekf.predict(1.5, 1.5)  # thinks it moved 1.5 m; truth is x = 1.0
     error_before = abs(ekf.pose[0] - 1.0)
     for _ in range(10):
-        ekf.update((10.0, 0.0), range_m=9.0, bearing_rad=0.0)  # tag ahead, true range 9.0
+        ekf.update(
+            (10.0, 0.0), range_m=9.0, bearing_rad=0.0
+        )  # tag ahead, true range 9.0
     error_after = abs(ekf.pose[0] - 1.0)
     assert error_before == pytest.approx(0.5, abs=1e-6)
     assert error_after < 0.1  # converged back near truth

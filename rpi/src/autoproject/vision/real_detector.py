@@ -51,7 +51,10 @@ class RealAprilTagDetector(IAprilTagDetector):
             center = (float(r.center[0]), float(r.center[1]))
             detections.append(
                 Detection(
-                    tag_id=int(r.tag_id), center_px=center, range_m=range_m, bearing_rad=bearing_rad
+                    tag_id=int(r.tag_id),
+                    center_px=center,
+                    range_m=range_m,
+                    bearing_rad=bearing_rad,
                 )
             )
         return detections

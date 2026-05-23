@@ -113,7 +113,10 @@ class World:
 
         Returns the (possibly reduced) velocity and whether a slip occurred.
         """
-        if self.noise.wheel_slip_prob > 0.0 and self._rng.random() < self.noise.wheel_slip_prob:
+        if (
+            self.noise.wheel_slip_prob > 0.0
+            and self._rng.random() < self.noise.wheel_slip_prob
+        ):
             return wheel_velocity * self.noise.wheel_slip_factor, True
         return wheel_velocity, False
 
@@ -152,7 +155,11 @@ class World:
         return not self.in_collision(x, y)
 
     def raycast(
-        self, x: float, y: float, angle: float, max_range: float = DEFAULT_ULTRASONIC_MAX_M
+        self,
+        x: float,
+        y: float,
+        angle: float,
+        max_range: float = DEFAULT_ULTRASONIC_MAX_M,
     ) -> float:
         """Distance from ``(x, y)`` along ``angle`` to the nearest obstacle or wall.
 
@@ -210,7 +217,9 @@ class World:
                 < range_m - 1e-3
             ):
                 continue
-            sightings.append(TagSighting(tag_id=tag_id, range_m=range_m, bearing_rad=bearing))
+            sightings.append(
+                TagSighting(tag_id=tag_id, range_m=range_m, bearing_rad=bearing)
+            )
         return sightings
 
     # ------------------------------------------------------------------ #
@@ -256,7 +265,9 @@ class World:
         start = scenario["robot"]["start"]
         robot_pose = Pose(start["x"], start["y"], start["theta"])
         goal_cfg = scenario["robot"].get("goal")
-        goal = Pose(goal_cfg["x"], goal_cfg["y"], goal_cfg["theta"]) if goal_cfg else None
+        goal = (
+            Pose(goal_cfg["x"], goal_cfg["y"], goal_cfg["theta"]) if goal_cfg else None
+        )
 
         logger.info(
             "Loaded scenario '%s': %.1fx%.1f m, %d obstacles, %d tags",

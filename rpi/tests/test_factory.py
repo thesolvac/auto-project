@@ -36,9 +36,12 @@ def test_load_runtime_defaults_to_sim():
 def test_resolve_mode_global_and_override():
     assert resolve_mode({"mode": "sim", "components": {}}, "comms") is RuntimeMode.SIM
     assert (
-        resolve_mode({"mode": "sim", "components": {"comms": "real"}}, "comms") is RuntimeMode.REAL
+        resolve_mode({"mode": "sim", "components": {"comms": "real"}}, "comms")
+        is RuntimeMode.REAL
     )
-    assert resolve_mode({"mode": "real", "components": None}, "camera") is RuntimeMode.REAL
+    assert (
+        resolve_mode({"mode": "real", "components": None}, "camera") is RuntimeMode.REAL
+    )
 
 
 def test_build_sim_components():

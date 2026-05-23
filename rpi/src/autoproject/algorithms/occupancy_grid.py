@@ -46,7 +46,9 @@ class OccupancyGrid:
     # --- world <-> cell ---
     def world_to_cell(self, x: float, y: float) -> tuple[int, int]:
         """World metres -> ``(ix, iy)`` cell indices (no bounds clamping)."""
-        return int(math.floor(x / self.resolution_m)), int(math.floor(y / self.resolution_m))
+        return int(math.floor(x / self.resolution_m)), int(
+            math.floor(y / self.resolution_m)
+        )
 
     def cell_to_world(self, ix: int, iy: int) -> tuple[float, float]:
         """``(ix, iy)`` cell indices -> world metres at the cell centre."""
@@ -89,6 +91,22 @@ class OccupancyGrid:
                 if 0 <= nx_ < self.nx and 0 <= ny_ < self.ny:
                     inflated[ny_, nx_] = True
         return OccupancyGrid(inflated, self.resolution_m)
+
+    def mark_rect(self, x_min: float, y_min: float, x_max: float, y_max: float) -> None:
+        """Mark the cells overlapping a world rectangle as occupied (in place).
+
+        Used to add dynamically discovered obstacles to the planning map.
+        """
+        ix0 = max(0, int(math.floor(x_min / self.resolution_m)))
+        ix1 = min(self.nx - 1, int(math.floor(x_max / self.resolution_m)))
+        iy0 = max(0, int(math.floor(y_min / self.resolution_m)))
+        iy1 = min(self.ny - 1, int(math.floor(y_max / self.resolution_m)))
+        if ix0 <= ix1 and iy0 <= iy1:
+            self.occupied[iy0 : iy1 + 1, ix0 : ix1 + 1] = True
+
+    def copy(self) -> OccupancyGrid:
+        """Return a deep copy (independent occupancy array)."""
+        return OccupancyGrid(self.occupied.copy(), self.resolution_m)
 
     def to_image(self) -> np.ndarray:
         """Return a uint8 image (occupied = 255, free = 0) for visualization."""

@@ -68,7 +68,9 @@ def _tags_visible(scenario: str, k: int) -> bool:
     return True  # continuous
 
 
-def _rmse(filt: PoseFilter, scenario: str, noise: NoiseConfig, *, use_updates: bool) -> float:
+def _rmse(
+    filt: PoseFilter, scenario: str, noise: NoiseConfig, *, use_updates: bool
+) -> float:
     world = _world(noise)
     comms = SimRobotComms(world)
     detector = SimAprilTagDetector(world, fov_rad=math.radians(170), max_range_m=30.0)
@@ -104,13 +106,22 @@ def main() -> None:
     for scenario in SCENARIOS:
         noise = NOISES[scenario]
         results["odometry"].append(
-            _rmse(EKFFusion(0.15, initial_pose=_START), scenario, noise, use_updates=False)
+            _rmse(
+                EKFFusion(0.15, initial_pose=_START), scenario, noise, use_updates=False
+            )
         )
         results["complementary"].append(
-            _rmse(ComplementaryFilter(0.15, initial_pose=_START), scenario, noise, use_updates=True)
+            _rmse(
+                ComplementaryFilter(0.15, initial_pose=_START),
+                scenario,
+                noise,
+                use_updates=True,
+            )
         )
         results["ekf"].append(
-            _rmse(EKFFusion(0.15, initial_pose=_START), scenario, noise, use_updates=True)
+            _rmse(
+                EKFFusion(0.15, initial_pose=_START), scenario, noise, use_updates=True
+            )
         )
 
     import matplotlib

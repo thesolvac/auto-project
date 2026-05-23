@@ -11,7 +11,9 @@ from autoproject.simulation.world import World
 
 
 def test_integrate_arc_straight():
-    assert integrate_arc(0.0, 0.0, 0.0, 1.0, 1.0, 0.15) == pytest.approx((1.0, 0.0, 0.0))
+    assert integrate_arc(0.0, 0.0, 0.0, 1.0, 1.0, 0.15) == pytest.approx(
+        (1.0, 0.0, 0.0)
+    )
 
 
 def test_integrate_arc_turns_left():
@@ -22,7 +24,11 @@ def test_integrate_arc_turns_left():
 
 def test_first_update_sets_baseline():
     odom = WheelOdometry(wheelbase_m=0.15)
-    assert odom.update_counts(1000, 1000) == (0.0, 0.0, 0.0)  # no motion on the first sample
+    assert odom.update_counts(1000, 1000) == (
+        0.0,
+        0.0,
+        0.0,
+    )  # no motion on the first sample
 
 
 def test_five_metre_straight_run_under_5pct_error():
