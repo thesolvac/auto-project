@@ -1,0 +1,9 @@
+# Normalize all text to LF in the repository (deployment target is Linux/RPi).
+# Keeps the history clean regardless of the developer's host OS.
+* text=auto eol=lf
+
+# Explicitly binary (never touch line endings).
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.pdf binary

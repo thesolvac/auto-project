@@ -1,0 +1,22 @@
+# Named simulation scenario: a small room with three rectangular obstacles.
+# Consumed by tools/run_simulation.py and integration tests (Phase 5).
+# Phase 0: sample scenario establishing the schema.
+
+name: demo_room
+description: 4m x 3m room, three box obstacles, single point-to-point goal.
+
+map:
+  width_m: 4.0
+  height_m: 3.0
+  resolution_m: 0.05           # occupancy grid cell size [m]
+  # Obstacles as axis-aligned rectangles: [x_min, y_min, x_max, y_max] in metres.
+  obstacles:
+    - [1.0, 0.0, 1.2, 1.8]
+    - [2.5, 1.2, 2.7, 3.0]
+    - [1.8, 0.5, 2.2, 0.9]
+
+robot:
+  start: { x: 0.3, y: 0.3, theta: 0.0 }
+  goal: { x: 3.6, y: 2.6, theta: 0.0 }
+
+tags_file: ../world_tags.yaml   # AprilTag placements for this scenario

@@ -1,0 +1,33 @@
+# Source of truth for Python dependencies (RPi 5 / Debian, Python 3.11+).
+# Recreate the venv fresh on each machine:  python -m venv rpi/.venv
+# Then:  pip install -r rpi/requirements.txt
+
+# --- Numerics & science ---
+numpy>=1.26
+scipy>=1.11
+filterpy>=1.4.5          # EKF / Kalman filtering (Phase 4)
+
+# --- Vision ---
+opencv-python>=4.8
+pupil-apriltags>=1.0.4   # AprilTag detection (Phase 2 RealAprilTagDetector)
+
+# --- Hardware I/O (used only in mode: real, Phase 7) ---
+pyserial>=3.5            # ESP32 UART link
+
+# --- Config & validation ---
+pydantic>=2.5
+pyyaml>=6.0
+
+# --- Web UI (Phase 6) ---
+flask>=3.0
+flask-socketio>=5.3
+
+# --- Plotting / analysis ---
+matplotlib>=3.8
+
+# --- Testing & quality ---
+pytest>=8.0
+pytest-cov>=4.1
+pytest-mock>=3.12
+ruff>=0.5
+black>=24.0

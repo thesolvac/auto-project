@@ -1,0 +1,43 @@
+# ESP32 pin assignments — single source of truth for firmware wiring.
+# Phase 0: provisional defaults. Every pin must be confirmed against the actual
+# wiring before flashing (Phase 7). GPIO numbers are ESP32 DEVKIT V1 (esp32dev).
+#
+# Notes / constraints (ESP32 datasheet):
+#  - GPIO 6-11 are reserved for onboard SPI flash; never use.
+#  - GPIO 34-39 are input-only (no pull-ups, no output) -> sensors only.
+
+steppers:
+  shared_enable: 25           # TMC2209 EN (active low), shared across both drivers
+  microstep:
+    ms1: 32
+    ms2: 33
+  left:
+    step: 26
+    dir: 27
+  right:
+    step: 14
+    dir: 12
+
+i2c:
+  sda: 21                     # default ESP32 I2C SDA
+  scl: 22                     # default ESP32 I2C SCL
+  tca9548a_addr: 0x70         # I2C multiplexer address
+  as5600_addr: 0x36           # fixed AS5600 address (behind the mux channels)
+  encoder_channels:           # TCA9548A channel per encoder
+    left: 0
+    right: 1
+
+ultrasonic:
+  front:
+    trig: 5
+    echo: 34                  # input-only pin; Echo via voltage divider (5V -> 3.3V)
+  rear:
+    trig: 4
+    echo: 35                  # input-only pin; Echo via voltage divider
+
+uart:
+  # ESP32 <-> RPi link. Phase 0/dev uses USB CDC (Serial). Pins listed for the
+  # hardware UART option used in Phase 7 if a dedicated UART is chosen.
+  baud: 115200
+  tx: 1                       # default UART0 TX (USB)
+  rx: 3                       # default UART0 RX (USB)

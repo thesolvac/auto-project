@@ -1,0 +1,15 @@
+# Runtime mode selection — the dependency-injection switch for the whole system.
+# factory.py reads this once at startup and constructs Sim* or Real* components.
+#
+#   sim  : all hardware is simulated by autoproject.simulation.world.World
+#   real : interfaces talk to physical hardware (ESP32 over UART, USB camera)
+#
+# Stays "sim" through Phases 0-6. Flipped to "real" in Phase 7 (hardware bring-up).
+mode: sim
+
+# Per-component overrides (optional). When absent, the global `mode` applies.
+# Lets you mix, e.g., a real camera with a simulated robot during bring-up.
+components:
+  comms: null      # null -> follow global mode
+  camera: null
+  apriltag: null

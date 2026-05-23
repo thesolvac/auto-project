@@ -1,0 +1,56 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "autoproject"
+version = "0.0.0"
+description = "Autonomous indoor navigation robot — simulation-first codebase (RPi 5 + ESP32)"
+readme = "../README.md"
+requires-python = ">=3.11"
+authors = [{ name = "Adar Azulai" }]
+license = { text = "MIT" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+# ---------------------------------------------------------------------------
+# Ruff — linting (strict-ish). CI must pass before push.
+# ---------------------------------------------------------------------------
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "UP",  # pyupgrade
+    "N",   # pep8-naming
+    "SIM", # flake8-simplify
+]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]   # re-exporting the public API is intentional
+
+# ---------------------------------------------------------------------------
+# Black — formatting (100-char lines per coding standards).
+# ---------------------------------------------------------------------------
+[tool.black]
+line-length = 100
+target-version = ["py311"]
+
+# ---------------------------------------------------------------------------
+# Pytest — all tests are hardware-free.
+# ---------------------------------------------------------------------------
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+addopts = "-ra"
+markers = [
+    "hardware: requires physical hardware; skipped in CI (Phase 7 only)",
+]
