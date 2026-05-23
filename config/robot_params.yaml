@@ -3,10 +3,18 @@
 # Values marked (MEASURE) are provisional and must be confirmed on the assembled
 # robot during Phase 7; simulation uses them as-is.
 
+# Fields still listed here await measurement/confirmation on the assembled robot;
+# load_config() emits a WARNING for each at startup so they are never silently
+# trusted. Remove a path once its value is measured.
+provisional:
+  - drive.wheelbase_m
+  - drive.gear_ratio
+
 drive:
   wheelbase_m: 0.180          # (MEASURE) distance between the two driven wheels [m]
-  wheel_radius_m: 0.0325      # (MEASURE) driven wheel radius [m]
-  gear_ratio: 1.0             # motor:wheel reduction (1.0 = direct drive)
+  wheel_radius_m: 0.040       # MEASURED: wheel diameter 80 mm -> radius 40 mm [m]
+  wheel_width_m: 0.018        # MEASURED: tire width 18 mm (footprint, not used by kinematics) [m]
+  gear_ratio: 1.0             # (CONFIRM) motor:wheel reduction (1.0 = direct drive)
 
 stepper:
   steps_per_rev: 200          # NEMA 17, 1.8 deg/step -> 360/1.8 = 200 full steps

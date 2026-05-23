@@ -2,6 +2,11 @@
 # Real intrinsics (from cv2.calibrateCamera on the mounted webcam) replace these
 # in Phase 7. Pinhole model with OpenCV distortion coefficients.
 
+# Synthetic placeholders until real calibration is run on the mounted camera.
+provisional:
+  - intrinsics
+  - distortion
+
 resolution:
   width: 640
   height: 480

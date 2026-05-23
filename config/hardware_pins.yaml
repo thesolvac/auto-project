@@ -6,6 +6,10 @@
 #  - GPIO 6-11 are reserved for onboard SPI flash; never use.
 #  - GPIO 34-39 are input-only (no pull-ups, no output) -> sensors only.
 
+# Every pin below is a provisional assumption until confirmed against the actual
+# wiring (Phase 7). load_config() warns that the whole file is provisional.
+provisional: true
+
 steppers:
   shared_enable: 25           # TMC2209 EN (active low), shared across both drivers
   microstep:
