@@ -24,4 +24,7 @@ distortion: [0.0, 0.0, 0.0, 0.0, 0.0]
 
 apriltag:
   family: "tag36h11"
-  tag_size_m: 0.10            # printed tag edge length [m]
+  # Printed to fill an A4 page (210 x 297 mm); the square tag is bounded by the
+  # 210 mm short edge, less a small print margin. Confirm the black-square edge
+  # with a ruler after printing.
+  tag_size_m: 0.20            # black-square edge length [m]
