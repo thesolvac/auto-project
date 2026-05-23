@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Autoproject — Past runs</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 1.5rem; color: #222; }
+    #scene { border: 1px solid #ccc; background: #fafafa; }
+    li { margin: 0.2rem 0; }
+    button { font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+  <h1>Past runs (step-by-step replay)</h1>
+  <nav><a href="/">Home</a></nav>
+  <ul>
+    {% for r in runs %}<li>{{ r }} <button onclick="replay('{{ r }}')">replay</button></li>{% endfor %}
+  </ul>
+  <p><button id="step">Step</button> <button id="play">Play</button> <span id="hud"></span></p>
+  <svg id="scene" width="640" height="480" viewBox="0 0 640 480"></svg>
+
+  <script>
+    const svg = document.getElementById("scene");
+    const hud = document.getElementById("hud");
+    const SVGNS = "http://www.w3.org/2000/svg";
+    let records = [], idx = 0, timer = null;
+
+    async function replay(runId) {
+      const res = await fetch(`/api/runs/${runId}`);
+      records = await res.json();
+      idx = 0;
+      hud.textContent = `${runId}: ${records.length} frames`;
+      draw();
+    }
+    function draw() {
+      if (!records.length) return;
+      const r = records[Math.min(idx, records.length - 1)];
+      svg.innerHTML = "";
+      const dot = document.createElementNS(SVGNS, "circle");
+      // Records store world coords; assume a 5x3 m max extent for a simple view.
+      const sx = 640 / 5, sy = 480 / 3;
+      dot.setAttribute("cx", r.true[0] * sx);
+      dot.setAttribute("cy", 480 - r.true[1] * sy);
+      dot.setAttribute("r", 7); dot.setAttribute("fill", "#27e");
+      svg.appendChild(dot);
+      hud.textContent = `frame ${idx + 1}/${records.length}  t=${r.t}s state=${r.state}`;
+    }
+    document.getElementById("step").onclick = () => { idx = Math.min(idx + 1, records.length - 1); draw(); };
+    document.getElementById("play").onclick = () => {
+      if (timer) { clearInterval(timer); timer = null; return; }
+      timer = setInterval(() => {
+        if (idx >= records.length - 1) { clearInterval(timer); timer = null; return; }
+        idx += 1; draw();
+      }, 50);
+    };
+  </script>
+</body>
+</html>

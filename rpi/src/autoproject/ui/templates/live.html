@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Autoproject — Live</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 1.5rem; color: #222; }
+    #scene { border: 1px solid #ccc; background: #fafafa; }
+    #hud { margin-top: 0.5rem; font-variant-numeric: tabular-nums; }
+    button { font-size: 1rem; padding: 0.3rem 0.6rem; margin-right: 0.4rem; }
+    .estop { background: #c0392b; color: #fff; border: none; }
+  </style>
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+</head>
+<body>
+  <h1>Live simulation</h1>
+  <p>
+    <button id="estop" class="estop">EMERGENCY STOP</button>
+    <button id="auto">Resume auto</button>
+    <span>Arrow keys drive in manual mode.</span>
+  </p>
+  <svg id="scene" width="640" height="480" viewBox="0 0 640 480"></svg>
+  <div id="hud">connecting…</div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const scenario = params.get("scenario") || "demo_room";
+    const mode = params.get("mode") || "auto";
+    const svg = document.getElementById("scene");
+    const hud = document.getElementById("hud");
+    const SVGNS = "http://www.w3.org/2000/svg";
+    let scene = null, sx = 1, sy = 1;
+
+    const socket = io();
+    socket.on("connect", () => { hud.textContent = "connected"; socket.emit("start", { scenario, mode }); });
+
+    function W2Sx(x) { return x * sx; }
+    function W2Sy(y) { return 480 - y * sy; }  // flip Y (world up = screen up)
+
+    socket.on("scene", (s) => {
+      scene = s;
+      sx = 640 / s.width; sy = 480 / s.height;
+      svg.innerHTML = "";
+      for (const o of s.obstacles) {
+        const r = document.createElementNS(SVGNS, "rect");
+        r.setAttribute("x", W2Sx(o[0])); r.setAttribute("y", W2Sy(o[3]));
+        r.setAttribute("width", (o[2]-o[0])*sx); r.setAttribute("height", (o[3]-o[1])*sy);
+        r.setAttribute("fill", "#888"); svg.appendChild(r);
+      }
+      const g = document.createElementNS(SVGNS, "circle");
+      g.setAttribute("cx", W2Sx(s.goal[0])); g.setAttribute("cy", W2Sy(s.goal[1]));
+      g.setAttribute("r", 6); g.setAttribute("fill", "gold"); g.setAttribute("stroke", "#a80");
+      g.id = "goal"; svg.appendChild(g);
+    });
+
+    let pathEl = null, robotEl = null;
+    socket.on("state", (st) => {
+      if (!scene) return;
+      if (pathEl) pathEl.remove();
+      if (st.path && st.path.length) {
+        pathEl = document.createElementNS(SVGNS, "polyline");
+        pathEl.setAttribute("points", st.path.map(p => `${W2Sx(p[0])},${W2Sy(p[1])}`).join(" "));
+        pathEl.setAttribute("fill", "none"); pathEl.setAttribute("stroke", "#2a7"); pathEl.setAttribute("stroke-dasharray", "4");
+        svg.appendChild(pathEl);
+      }
+      if (!robotEl) {
+        robotEl = document.createElementNS(SVGNS, "circle");
+        robotEl.setAttribute("r", 7); robotEl.setAttribute("fill", "#27e");
+        svg.appendChild(robotEl);
+      }
+      robotEl.setAttribute("cx", W2Sx(st.true[0])); robotEl.setAttribute("cy", W2Sy(st.true[1]));
+      robotEl.setAttribute("fill", st.collided ? "#c0392b" : "#27e");
+      hud.textContent = `t=${st.t}s state=${st.state} mode=${st.mode} ` +
+        `pose=(${st.true[0]}, ${st.true[1]}, ${st.true[2]}) front=${st.dist_front} rear=${st.dist_rear}`;
+    });
+    socket.on("finished", (f) => { hud.textContent += `  [finished: ${f.state}]`; });
+
+    // Manual keyboard control.
+    const SPEED = 0.25;
+    const keymap = { ArrowUp: [SPEED, SPEED], ArrowDown: [-SPEED, -SPEED],
+                     ArrowLeft: [-SPEED, SPEED], ArrowRight: [SPEED, -SPEED] };
+    document.addEventListener("keydown", (e) => {
+      if (keymap[e.key]) { socket.emit("manual", { left: keymap[e.key][0], right: keymap[e.key][1] }); e.preventDefault(); }
+    });
+    document.addEventListener("keyup", (e) => {
+      if (keymap[e.key]) { socket.emit("manual", { left: 0, right: 0 }); e.preventDefault(); }
+    });
+    document.getElementById("estop").onclick = () => socket.emit("estop");
+    document.getElementById("auto").onclick = () => socket.emit("auto");
+  </script>
+</body>
+</html>
