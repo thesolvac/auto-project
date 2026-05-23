@@ -19,17 +19,22 @@ Production code depends only on abstract interfaces. `autoproject.factory` reads
 `config/runtime.yaml` (`mode: sim | real`) and constructs the matching
 implementations. Swapping simulation for hardware is a config change.
 
-## Interface contracts (Layer 2 — defined in Phase 2)
+## Interface contracts (Layer 2 — implemented)
 
-> Stubs documented here now; signatures are finalized when Phase 2 lands.
+- **`IRobotComms`** — `move(left_mps, right_mps)`, `stop()`, `get_telemetry() ->
+  Telemetry | None`; callback registration `on_obstacle`, `on_slip`, `on_done`.
+- **`ICamera`** — `get_frame() -> np.ndarray` (H×W×3 uint8 BGR).
+- **`IAprilTagDetector`** — `detect(frame) -> list[Detection]` with
+  `Detection(tag_id, center_px, range_m, bearing_rad)`.
 
-- **`IRobotComms`** — `move(left, right)`, `stop()`, `get_telemetry()`;
-  callbacks `on_obstacle`, `on_slip`, `on_done`.
-- **`ICamera`** — `get_frame() -> np.ndarray`.
-- **`IAprilTagDetector`** — `detect(frame) -> list[Detection]`.
+Each has a `Sim*` implementation (queries the Layer 0 `World`) and a `Real*`
+implementation (hardware: pyserial / OpenCV / pupil-apriltags). `Real*` modules
+are written and import-checked but executed only in `mode: real` (Phase 7).
 
-Each has a `Real*` implementation (hardware) and a `Sim*` implementation (queries
-the Layer 0 `World`).
+`autoproject.factory` builds the selected family: `build_robot_comms`,
+`build_camera`, `build_detector` read `runtime.yaml` (global `mode` + optional
+per-component overrides) and lazily import the concrete classes, so a
+simulation-only host needs no hardware libraries installed.
 
 ## Navigation state machine (Layer 5 — defined in Phase 5)
 
