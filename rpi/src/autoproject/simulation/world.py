@@ -76,6 +76,7 @@ class World:
         self._time_s = 0.0
         self._step_count = 0
         self.collided = False
+        self.last_step_slipped = False
         self._rng = random.Random(self.noise.seed)
 
     # ------------------------------------------------------------------ #
@@ -102,15 +103,19 @@ class World:
         self._time_s = 0.0
         self._step_count = 0
         self.collided = False
+        self.last_step_slipped = False
 
     # ------------------------------------------------------------------ #
     # Physics
     # ------------------------------------------------------------------ #
-    def _apply_slip(self, wheel_velocity: float) -> float:
-        """Randomly reduce a wheel's realized velocity to model slip."""
+    def _apply_slip(self, wheel_velocity: float) -> tuple[float, bool]:
+        """Randomly reduce a wheel's realized velocity to model slip.
+
+        Returns the (possibly reduced) velocity and whether a slip occurred.
+        """
         if self.noise.wheel_slip_prob > 0.0 and self._rng.random() < self.noise.wheel_slip_prob:
-            return wheel_velocity * self.noise.wheel_slip_factor
-        return wheel_velocity
+            return wheel_velocity * self.noise.wheel_slip_factor, True
+        return wheel_velocity, False
 
     def step(self, v_left: float, v_right: float) -> Pose:
         """Advance ground truth by one tick given commanded wheel velocities [m/s].
@@ -120,8 +125,9 @@ class World:
         :attr:`collided` if the robot's footprint leaves bounds or hits an
         obstacle. Returns the new pose.
         """
-        realized_left = self._apply_slip(v_left)
-        realized_right = self._apply_slip(v_right)
+        realized_left, slipped_left = self._apply_slip(v_left)
+        realized_right, slipped_right = self._apply_slip(v_right)
+        self.last_step_slipped = slipped_left or slipped_right
         self._pose = diff_drive_step(
             self._pose, realized_left, realized_right, self.wheelbase_m, self.dt_s
         )

@@ -8,7 +8,7 @@ scipy>=1.11
 filterpy>=1.4.5          # EKF / Kalman filtering (Phase 4)
 
 # --- Vision ---
-opencv-python>=4.8
+opencv-python-headless>=4.8   # headless: no libGL dependency (RPi is display-less; also unblocks CI)
 pupil-apriltags>=1.0.4   # AprilTag detection (Phase 2 RealAprilTagDetector)
 
 # --- Hardware I/O (used only in mode: real, Phase 7) ---
