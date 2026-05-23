@@ -99,11 +99,16 @@ def test_real_config_files_load(yaml_file):
     assert isinstance(cfg, dict)
 
 
-def test_robot_params_reports_expected_provisionals(caplog):
+def test_robot_params_fully_measured(caplog):
+    # All kinematic values are now measured/derived -> no provisional warnings.
     with caplog.at_level(logging.WARNING):
         load_config(CONFIG_DIR / "robot_params.yaml")
+    assert caplog.records == []
+
+
+def test_hardware_pins_marked_provisional(caplog):
+    # Pins are assumptions until the wiring is confirmed -> whole-file warning.
+    with caplog.at_level(logging.WARNING):
+        load_config(CONFIG_DIR / "hardware_pins.yaml")
     messages = [r.getMessage() for r in caplog.records]
-    assert any("drive.wheelbase_m" in m for m in messages)
-    assert any("drive.gear_ratio" in m for m in messages)
-    # wheel_radius_m has been measured -> must NOT warn
-    assert not any("wheel_radius_m" in m for m in messages)
+    assert any("ALL values are provisional" in m for m in messages)

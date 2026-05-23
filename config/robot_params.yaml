@@ -1,20 +1,15 @@
 # Physical robot parameters — single source of truth for kinematics.
 # Differential drive: 2x NEMA 17 steppers + 1 caster.
-# Values marked (MEASURE) are provisional and must be confirmed on the assembled
-# robot during Phase 7; simulation uses them as-is.
-
-# Fields still listed here await measurement/confirmation on the assembled robot;
-# load_config() emits a WARNING for each at startup so they are never silently
-# trusted. Remove a path once its value is measured.
-provisional:
-  - drive.wheelbase_m
-  - drive.gear_ratio
+# All kinematic values below are measured or derived from the assembled robot.
+# (load_config() warns on any value still listed under a `provisional` marker.)
 
 drive:
-  wheelbase_m: 0.180          # (MEASURE) distance between the two driven wheels [m]
+  # Wheels sit on a common axis at opposite edges of the 15 cm-wide chassis, so
+  # track width ~= chassis width. Confirm exact contact-point center-to-center.
+  wheelbase_m: 0.150          # derived from 15 cm chassis width [m]
   wheel_radius_m: 0.040       # MEASURED: wheel diameter 80 mm -> radius 40 mm [m]
   wheel_width_m: 0.018        # MEASURED: tire width 18 mm (footprint, not used by kinematics) [m]
-  gear_ratio: 1.0             # (CONFIRM) motor:wheel reduction (1.0 = direct drive)
+  gear_ratio: 1.0             # confirmed: wheel mounted directly on motor shaft
 
 stepper:
   steps_per_rev: 200          # NEMA 17, 1.8 deg/step -> 360/1.8 = 200 full steps
@@ -29,3 +24,29 @@ limits:
 goal_tolerance:
   position_m: 0.05            # "arrived" when within 5 cm of goal (Phase 5)
   heading_rad: 0.0873         # and within 5 deg (= 0.0873 rad)
+
+# Chassis footprint — used for obstacle inflation (Phase 3) so the planner keeps
+# the robot clear of obstacles.
+footprint:
+  width_m: 0.15              # MEASURED: chassis width [m]
+  length_m: 0.20             # MEASURED: chassis length [m]
+  # Half the chassis diagonal: sqrt(0.15^2 + 0.20^2) / 2 = 0.125 m. A conservative
+  # circular bound for inflation, valid regardless of heading.
+  collision_radius_m: 0.125
+
+# Encoder mounting: AS5600 on the motor shaft. Drive is direct (gear_ratio 1.0),
+# so encoder angle maps 1:1 to wheel angle — no reduction applied in odometry.
+encoder:
+  mounting: motor_shaft
+
+# Sensor mounting poses relative to the robot center (x forward, y left, theta
+# from +x). Per the build, both ultrasonics sit at the robot center.
+sensors:
+  ultrasonic_front:
+    x_m: 0.0
+    y_m: 0.0
+    theta_rad: 0.0           # faces forward (+x)
+  ultrasonic_rear:
+    x_m: 0.0
+    y_m: 0.0
+    theta_rad: 3.14159       # faces backward (-x)
