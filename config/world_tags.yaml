@@ -5,6 +5,9 @@
 #
 # Units: x, y in metres; theta in radians (tag facing direction, 0 = +x axis).
 
+# Sample placements until real tag positions are measured in the room (Phase 7).
+provisional: true
+
 tags:
   0:
     x: 0.0
