@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Autoproject — Simulation</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; color: #222; }
+    label { display: block; margin: 0.6rem 0 0.2rem; font-weight: 600; }
+    select, button { font-size: 1rem; padding: 0.4rem; }
+    .row { max-width: 28rem; }
+    nav a { margin-right: 1rem; }
+  </style>
+</head>
+<body>
+  <h1>Autonomous Navigation Robot — Simulation</h1>
+  <nav><a href="/live">Live</a><a href="/logs">Past runs</a></nav>
+  <form class="row" action="/live" method="get">
+    <label for="scenario">Scenario</label>
+    <select id="scenario" name="scenario">
+      {% for s in scenarios %}<option value="{{ s }}">{{ s }}</option>{% endfor %}
+    </select>
+    <label for="mode">Mode</label>
+    <select id="mode" name="mode">
+      <option value="auto">Autonomous</option>
+      <option value="manual">Manual (arrow keys)</option>
+    </select>
+    <p><button type="submit">Run &rarr;</button></p>
+  </form>
+</body>
+</html>

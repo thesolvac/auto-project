@@ -69,22 +69,36 @@ pip install platformio
 cd firmware && pio run -e esp32dev && pio test -e native && cd ..
 ```
 
+## Running the simulation
+
+```bash
+# End-to-end run on a scenario -> logs + trajectory plot under runs/
+python tools/run_simulation.py demo_room
+
+# Post-hoc figures from the latest run
+python tools/plot_logs.py latest
+
+# Live web UI (auto + manual control); open http://localhost:5000
+python -m autoproject.ui.app
+```
+
 ## Current Status
 
-**Phase 0 — Bootstrap.** Project skeleton, dependencies, config stubs, and CI in
-place. Firmware compiles an empty sketch; the Python test suite runs clean.
-
-Phases build bottom-up; each is fully tested before the next begins:
+**Simulation complete (`v1.0-sim-complete`).** The full stack runs end-to-end in
+simulation: firmware compiles + host-tests pass, the navigation stack drives the
+simulated robot to its goal with obstacle avoidance and slip recovery, and a web
+UI visualizes live runs and replays logs. Hardware integration (Phase 7) is the
+remaining, deferred step.
 
 | Phase | Scope | State |
 |------:|-------|-------|
-| 0 | Bootstrap (structure, deps, CI) | in progress |
-| 1 | ESP32 firmware | pending |
-| 2 | I/O abstraction (interfaces + Real + Sim) | pending |
-| 3 | Algorithms (grid, A*, smoothing, pursuit) | pending |
-| 4 | Localization & sensor fusion | pending |
-| 5 | Navigation stack | pending |
-| 6 | UI, logging, manual override | pending |
+| 0 | Bootstrap (structure, deps, CI) | ✅ done |
+| 1 | ESP32 firmware | ✅ done |
+| 2 | I/O abstraction (interfaces + Real + Sim) | ✅ done |
+| 3 | Algorithms (grid, A*, smoothing, pursuit) | ✅ done |
+| 4 | Localization & sensor fusion | ✅ done |
+| 5 | Navigation stack | ✅ done |
+| 6 | UI, logging, manual override | ✅ done |
 | 7 | Hardware integration | deferred |
 
 ## License
