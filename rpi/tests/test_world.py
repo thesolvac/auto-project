@@ -67,7 +67,9 @@ def test_in_collision_bounds_and_obstacles():
 
 
 def test_step_latches_collision_when_driving_into_wall():
-    world = _empty_world(robot_pose=Pose(3.9, 1.5, 0.0), collision_radius_m=0.05, dt_s=1.0)
+    world = _empty_world(
+        robot_pose=Pose(3.9, 1.5, 0.0), collision_radius_m=0.05, dt_s=1.0
+    )
     world.step(0.5, 0.5)  # drives past the right wall
     assert world.collided
 
@@ -75,7 +77,9 @@ def test_step_latches_collision_when_driving_into_wall():
 def test_visible_tags_in_front_only():
     tags = {7: Pose(3.0, 1.5, math.pi)}  # 1 m straight ahead
     world = _empty_world(tags=tags)
-    sightings = world.visible_tags(Pose(2.0, 1.5, 0.0), fov_rad=math.radians(60), max_range=5.0)
+    sightings = world.visible_tags(
+        Pose(2.0, 1.5, 0.0), fov_rad=math.radians(60), max_range=5.0
+    )
     assert len(sightings) == 1
     assert sightings[0].tag_id == 7
     assert sightings[0].range_m == pytest.approx(1.0)
@@ -85,14 +89,18 @@ def test_visible_tags_in_front_only():
 def test_tag_outside_fov_not_seen():
     tags = {1: Pose(2.0, 2.5, 0.0)}  # directly to the left (90 deg bearing)
     world = _empty_world(tags=tags)
-    sightings = world.visible_tags(Pose(2.0, 1.5, 0.0), fov_rad=math.radians(60), max_range=5.0)
+    sightings = world.visible_tags(
+        Pose(2.0, 1.5, 0.0), fov_rad=math.radians(60), max_range=5.0
+    )
     assert sightings == []
 
 
 def test_tag_beyond_range_not_seen():
     tags = {1: Pose(3.0, 1.5, 0.0)}
     world = _empty_world(tags=tags)
-    sightings = world.visible_tags(Pose(2.0, 1.5, 0.0), fov_rad=math.radians(90), max_range=0.5)
+    sightings = world.visible_tags(
+        Pose(2.0, 1.5, 0.0), fov_rad=math.radians(90), max_range=0.5
+    )
     assert sightings == []
 
 
@@ -100,7 +108,9 @@ def test_tag_occluded_by_obstacle_not_seen():
     tags = {1: Pose(3.5, 1.5, math.pi)}
     obstacle = Rectangle(2.8, 1.0, 3.0, 2.0)  # wall between camera and tag
     world = _empty_world(tags=tags, obstacles=[obstacle])
-    sightings = world.visible_tags(Pose(2.0, 1.5, 0.0), fov_rad=math.radians(60), max_range=5.0)
+    sightings = world.visible_tags(
+        Pose(2.0, 1.5, 0.0), fov_rad=math.radians(60), max_range=5.0
+    )
     assert sightings == []
 
 

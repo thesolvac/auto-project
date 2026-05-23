@@ -1,0 +1,12 @@
+stateDiagram-v2
+    [*] --> IDLE
+    IDLE --> PLANNING: goal set
+    PLANNING --> EXECUTING: path found
+    PLANNING --> EMERGENCY: no path
+    EXECUTING --> REACHED: within goal tolerance
+    EXECUTING --> AVOIDING: unknown obstacle < 30 cm (front)
+    EXECUTING --> RELOCALIZING: ERR SLIP
+    AVOIDING --> PLANNING: obstacle added to map, replan
+    RELOCALIZING --> PLANNING: AprilTag fix or timeout
+    REACHED --> [*]
+    EMERGENCY --> [*]

@@ -68,7 +68,9 @@ class WheelOdometry:
         self._prev_left = None
         self._prev_right = None
 
-    def update_counts(self, left_counts: int, right_counts: int) -> tuple[float, float, float]:
+    def update_counts(
+        self, left_counts: int, right_counts: int
+    ) -> tuple[float, float, float]:
         """Integrate the pose from absolute encoder counts (first call sets the baseline)."""
         if self._prev_left is None or self._prev_right is None:
             self._prev_left, self._prev_right = left_counts, right_counts

@@ -28,7 +28,9 @@ from autoproject.simulation.geometry import Pose, normalize_angle
 _STRAIGHT_OMEGA_EPS = 1e-9
 
 
-def diff_drive_step(pose: Pose, v_left: float, v_right: float, wheelbase: float, dt: float) -> Pose:
+def diff_drive_step(
+    pose: Pose, v_left: float, v_right: float, wheelbase: float, dt: float
+) -> Pose:
     """Advance a differential-drive ``pose`` by one timestep ``dt``.
 
     ``v_left`` / ``v_right`` are wheel linear velocities [m/s]; ``wheelbase`` is

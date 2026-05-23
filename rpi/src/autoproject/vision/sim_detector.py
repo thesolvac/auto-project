@@ -49,11 +49,15 @@ class SimAprilTagDetector(IAprilTagDetector):
         self.bearing_sigma_rad = bearing_sigma_rad
         self._rng = random.Random(world.noise.seed + 2)
 
-    def detect(self, frame: np.ndarray | None = None) -> list[Detection]:  # noqa: ARG002
+    def detect(
+        self, frame: np.ndarray | None = None
+    ) -> list[Detection]:  # noqa: ARG002
         p = self.world.pose
         camera_pose = Pose(p.x, p.y, p.theta + self.yaw_offset_rad)
         detections: list[Detection] = []
-        for sighting in self.world.visible_tags(camera_pose, self.fov_rad, self.max_range_m):
+        for sighting in self.world.visible_tags(
+            camera_pose, self.fov_rad, self.max_range_m
+        ):
             range_m = sighting.range_m
             bearing = sighting.bearing_rad
             if self.range_sigma_m > 0.0:

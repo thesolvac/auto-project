@@ -36,11 +36,35 @@ are written and import-checked but executed only in `mode: real` (Phase 7).
 per-component overrides) and lazily import the concrete classes, so a
 simulation-only host needs no hardware libraries installed.
 
-## Navigation state machine (Layer 5 — defined in Phase 5)
+## Navigation state machine (Layer 5)
 
-States: `IDLE / PLANNING / EXECUTING / AVOIDING / RELOCALIZING / EMERGENCY`.
-The committed Mermaid state diagram (with transition triggers) is added in
-Phase 5 under `docs/figures/`.
+States: `IDLE / PLANNING / EXECUTING / AVOIDING / RELOCALIZING / EMERGENCY /
+REACHED`. Source: `docs/figures/nav_state_machine.mmd`.
+
+```mermaid
+stateDiagram-v2
+    [*] --> IDLE
+    IDLE --> PLANNING: goal set
+    PLANNING --> EXECUTING: path found
+    PLANNING --> EMERGENCY: no path
+    EXECUTING --> REACHED: within goal tolerance
+    EXECUTING --> AVOIDING: unknown obstacle < 30 cm (front)
+    EXECUTING --> RELOCALIZING: ERR SLIP
+    AVOIDING --> PLANNING: obstacle added to map, replan
+    RELOCALIZING --> PLANNING: AprilTag fix or timeout
+    REACHED --> [*]
+    EMERGENCY --> [*]
+```
+
+Notes:
+- The reactive layer reacts only to *unknown* obstacles (known map features are
+  expected and the planned path already clears them). A detected unknown obstacle
+  is added to the planning grid and the robot replans around it.
+- `RELOCALIZING` waits for a fresh AprilTag fix to correct the fused pose, but
+  falls back to replanning from odometry after a timeout so it never deadlocks; a
+  cooldown then suppresses repeated slip events.
+- Goal reached: `||pose - goal|| < 5 cm` and `|θ - θ_goal| < 5°` (rotate-in-place
+  for the final heading).
 
 ## UART link (Layer 1 ↔ Layer 2)
 

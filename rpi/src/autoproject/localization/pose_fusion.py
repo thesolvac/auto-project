@@ -38,7 +38,9 @@ class PoseFilter(ABC):
         """Advance the estimate by an odometry increment (per-wheel metres)."""
 
     @abstractmethod
-    def update(self, tag_world_xy: tuple[float, float], range_m: float, bearing_rad: float) -> None:
+    def update(
+        self, tag_world_xy: tuple[float, float], range_m: float, bearing_rad: float
+    ) -> None:
         """Correct the estimate with a sighting of a tag at a known world position."""
 
     @property
@@ -51,7 +53,11 @@ class ComplementaryFilter(PoseFilter):
     """Odometry integration with a complementary position correction from tags."""
 
     def __init__(
-        self, wheelbase_m: float, *, alpha: float = 0.85, initial_pose: Pose = (0.0, 0.0, 0.0)
+        self,
+        wheelbase_m: float,
+        *,
+        alpha: float = 0.85,
+        initial_pose: Pose = (0.0, 0.0, 0.0),
     ) -> None:
         self.wheelbase_m = wheelbase_m
         self.alpha = alpha
@@ -62,7 +68,9 @@ class ComplementaryFilter(PoseFilter):
             self._x, self._y, self._theta, d_left_m, d_right_m, self.wheelbase_m
         )
 
-    def update(self, tag_world_xy: tuple[float, float], range_m: float, bearing_rad: float) -> None:
+    def update(
+        self, tag_world_xy: tuple[float, float], range_m: float, bearing_rad: float
+    ) -> None:
         # Range-only radial correction (bearing is intentionally unused: it would
         # couple the position fix to the heading error). Move the estimate along
         # the tag->estimate ray so its distance to the tag equals the measurement.
@@ -115,16 +123,22 @@ class EKFFusion(PoseFilter):
                 [0.0, 0.0, 1.0],
             ]
         )
-        nx, ny, ntheta = integrate_arc(x, y, theta, d_left_m, d_right_m, self.wheelbase_m)
+        nx, ny, ntheta = integrate_arc(
+            x, y, theta, d_left_m, d_right_m, self.wheelbase_m
+        )
         self._ekf.x = np.array([nx, ny, ntheta])
         self._ekf.P = f_jac @ self._ekf.P @ f_jac.T + self._q
 
-    def update(self, tag_world_xy: tuple[float, float], range_m: float, bearing_rad: float) -> None:
+    def update(
+        self, tag_world_xy: tuple[float, float], range_m: float, bearing_rad: float
+    ) -> None:
         tx, ty = tag_world_xy
 
         def hx(state: np.ndarray) -> np.ndarray:
             dx, dy = tx - state[0], ty - state[1]
-            return np.array([math.hypot(dx, dy), normalize_angle(math.atan2(dy, dx) - state[2])])
+            return np.array(
+                [math.hypot(dx, dy), normalize_angle(math.atan2(dy, dx) - state[2])]
+            )
 
         def h_jacobian(state: np.ndarray) -> np.ndarray:
             dx, dy = tx - state[0], ty - state[1]
@@ -160,4 +174,6 @@ def make_pose_filter(
         return EKFFusion(wheelbase_m, initial_pose=initial_pose)
     if key == "complementary":
         return ComplementaryFilter(wheelbase_m, initial_pose=initial_pose)
-    raise ValueError(f"unknown pose filter kind: {kind!r} (expected 'ekf' or 'complementary')")
+    raise ValueError(
+        f"unknown pose filter kind: {kind!r} (expected 'ekf' or 'complementary')"
+    )

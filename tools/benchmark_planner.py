@@ -51,7 +51,8 @@ def main() -> None:
     fig, ax = plt.subplots()
     for density in DENSITIES:
         means = [
-            float(np.mean([_time_solve(size, density, seed) for seed in range(TRIALS)])) * 1e3
+            float(np.mean([_time_solve(size, density, seed) for seed in range(TRIALS)]))
+            * 1e3
             for size in GRID_SIZES
         ]
         ax.plot(GRID_SIZES, means, marker="o", label=f"{int(density * 100)}% obstacles")

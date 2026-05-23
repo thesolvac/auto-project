@@ -39,7 +39,9 @@ class RealRobotComms(IRobotComms):
     def start(self) -> None:
         """Open the port and spin up the background reader thread."""
         self._stop.clear()
-        self._reader = threading.Thread(target=self._read_loop, name="robot-comms", daemon=True)
+        self._reader = threading.Thread(
+            target=self._read_loop, name="robot-comms", daemon=True
+        )
         self._reader.start()
 
     def close(self) -> None:
@@ -76,7 +78,9 @@ class RealRobotComms(IRobotComms):
                 if raw:
                     self._handle_line(raw.decode("ascii", errors="ignore").strip())
             except (serial.SerialException, OSError) as exc:
-                logger.warning("Serial error (%s); reconnecting in %.1fs", exc, _RECONNECT_DELAY_S)
+                logger.warning(
+                    "Serial error (%s); reconnecting in %.1fs", exc, _RECONNECT_DELAY_S
+                )
                 self._serial = None
                 time.sleep(_RECONNECT_DELAY_S)
 

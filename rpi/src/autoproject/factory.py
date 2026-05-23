@@ -50,7 +50,9 @@ def _require_world(world: World | None, what: str) -> World:
     return world
 
 
-def build_robot_comms(runtime: dict[str, Any], *, world: World | None = None) -> IRobotComms:
+def build_robot_comms(
+    runtime: dict[str, Any], *, world: World | None = None
+) -> IRobotComms:
     """Construct the robot-comms implementation selected by ``runtime``."""
     if resolve_mode(runtime, "comms") is RuntimeMode.SIM:
         from autoproject.comms.sim_comms import SimRobotComms
@@ -87,7 +89,9 @@ def build_camera(runtime: dict[str, Any], *, world: World | None = None) -> ICam
     return RealCamera()
 
 
-def build_detector(runtime: dict[str, Any], *, world: World | None = None) -> IAprilTagDetector:
+def build_detector(
+    runtime: dict[str, Any], *, world: World | None = None
+) -> IAprilTagDetector:
     """Construct the AprilTag-detector implementation selected by ``runtime``."""
     if resolve_mode(runtime, "apriltag") is RuntimeMode.SIM:
         from autoproject.vision.sim_detector import SimAprilTagDetector

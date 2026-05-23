@@ -89,7 +89,9 @@ def _warn_provisional(data: dict[str, Any], marker: Any, source: str) -> None:
         )
 
 
-def load_config(path: str | Path, model: type[ModelT] | None = None) -> dict[str, Any] | ModelT:
+def load_config(
+    path: str | Path, model: type[ModelT] | None = None
+) -> dict[str, Any] | ModelT:
     """Load and validate a YAML config file.
 
     Parses ``path``, emits a warning for every value marked ``provisional``, and
