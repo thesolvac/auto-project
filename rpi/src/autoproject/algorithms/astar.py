@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import heapq
 import math
+from collections.abc import Callable
 
 from autoproject.algorithms.occupancy_grid import OccupancyGrid
 
@@ -59,6 +60,7 @@ def astar(
     grid: OccupancyGrid,
     start_world: tuple[float, float],
     goal_world: tuple[float, float],
+    on_step: Callable[[dict[str, object]], None] | None = None,
 ) -> list[tuple[float, float]] | None:
     """Plan a path from ``start_world`` to ``goal_world`` (both in metres).
 
@@ -83,6 +85,16 @@ def astar(
     while open_heap:
         _, ix, iy = heapq.heappop(open_heap)
         current = (ix, iy)
+        if on_step is not None:
+            open_cells = {(item[1], item[2]) for item in open_heap}
+            on_step({
+                'current': current,
+                'open': list(open_cells),
+                'closed': list(set(g_score.keys()) - open_cells - {current}),
+                'came_from': dict(came_from),
+                'g_score': dict(g_score),
+                'goal': (gx, gy),
+            })
         if current == goal:
             return _reconstruct(grid, came_from, current)
         if current in closed:
